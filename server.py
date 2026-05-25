@@ -652,6 +652,17 @@ async def breath(
             parts.append("=== 核心准则 ===\n" + "\n---\n".join(pinned_results))
         if dynamic_results:
             parts.append("=== 浮现记忆 ===\n" + "\n---\n".join(dynamic_results))
+        
+        # --- Night-Fall auto-surface patch ---
+        is_contextual_noquery = (valence != -1 or arousal != -1)
+        if is_contextual_noquery and _night_fall_auto_surface is not None:
+            try:
+                dream_block = await _night_fall_auto_surface()
+                if dream_block:
+                    parts.append(dream_block)
+            except Exception as e:
+                logger.warning(f"Auto-surface failed / 自动浮梦失败: {e}")
+        
         return "\n\n".join(parts)
 
     # --- Feel retrieval: domain="feel" is a special channel ---
