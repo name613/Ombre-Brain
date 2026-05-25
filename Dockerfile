@@ -30,5 +30,12 @@ ENV OMBRE_TRANSPORT=streamable-http
 ENV OMBRE_BUCKETS_DIR=/app/buckets
 
 EXPOSE 8000
+# ── Night Fall extension ──────────────────────────────────────────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir git+https://github.com/ysuu525/Night-Fall.git
 
-CMD ["python", "server.py"]
+ENV OMBRE_HOME=/app
+ENV NIGHT_FALL_DATA_DIR=/app/night_fall
+
+CMD ["python", "-m", "night_fall.launcher"]
