@@ -1075,6 +1075,35 @@ async def trace(
 
 
 # =============================================================
+# Tool 4.5: read_bucket — Read single bucket content by ID
+# 工具 4.5：read_bucket — 按 ID 读取单个桶的完整内容（含 feel 桶）
+# =============================================================
+@mcp.tool()
+async def read_bucket(bucket_id: str) -> str:
+    """按 bucket_id 读取单个记忆桶的完整内容，包括 feel 桶。"""
+    if not bucket_id or not bucket_id.strip():
+        return "请提供有效的 bucket_id。"
+    bucket = await bucket_mgr.get(bucket_id.strip())
+    if not bucket:
+        return f"未找到记忆桶: {bucket_id}"
+    meta = bucket.get("metadata", {})
+    content = strip_wikilinks(bucket.get("content", ""))
+    lines = [
+        f"[bucket_id:{bucket['id']}]",
+        f"名称: {meta.get('name', '（无）')}",
+        f"主题: {', '.join(meta.get('domain', [])) or '（无）'}",
+        f"情感: V{meta.get('valence', 0.5):.1f}/A{meta.get('arousal', 0.3):.1f}",
+        f"重要: {meta.get('importance', 5)}",
+        f"标签: {', '.join(meta.get('tags', [])) or '（无）'}",
+        f"feel桶: {'是' if meta.get('feel') else '否'}",
+        f"钉选: {'是' if meta.get('pinned') else '否'}",
+        "---",
+        content or "（内容为空）",
+    ]
+    return "\n".join(lines)
+
+
+# =============================================================
 # Tool 5: pulse — Heartbeat, system status + memory listing
 # 工具 5：pulse — 脉搏，系统状态 + 记忆列表
 # =============================================================
