@@ -112,6 +112,11 @@ mcp = FastMCP(
     port=OMBRE_PORT,
 )
 
+# Injection point for Night Fall extension.
+# Set to an async callable by night_fall.launcher at runtime via
+# register_night_fall(). Remains None when server.py runs standalone.
+_night_fall_auto_surface = None
+
 
 # =============================================================
 # Dashboard Auth — simple cookie-based session auth
